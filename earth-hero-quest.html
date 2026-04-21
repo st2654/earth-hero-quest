@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<!-- saved from url=(0053)file:///Users/sourabh/Downloads/earth-hero-quest.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Earth Hero Quest</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0f7eb;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:1rem}
+  .game-wrap{width:100%;max-width:600px;margin:0 auto}
+  .screen{display:none}
+  .screen.active{display:block}
+  .earth-scene{width:100%;height:190px;position:relative;background:#EAF3DE;border-radius:16px;margin-bottom:1.25rem;overflow:hidden;display:flex;align-items:center;justify-content:center;border:1px solid #C0DD97}
+  .earth-caption{position:absolute;bottom:10px;left:0;right:0;text-align:center;font-size:12px;color:#3B6D11;font-weight:500}
+  .health-bar-wrap{margin-bottom:1.25rem}
+  .health-label{font-size:13px;color:#5F5E5A;margin-bottom:6px;display:flex;justify-content:space-between;font-weight:500}
+  .health-bar{height:18px;background:#D3D1C7;border-radius:20px;overflow:hidden;border:1px solid #B4B2A9}
+  .health-fill{height:100%;border-radius:20px;transition:width .6s ease,background .6s ease}
+  .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.25rem}
+  .stat-card{background:#ffffff;border-radius:10px;padding:10px 8px;text-align:center;border:1px solid #D3D1C7}
+  .stat-val{font-size:24px;font-weight:700;color:#27500A}
+  .stat-lbl{font-size:11px;color:#888780;margin-top:2px}
+  .q-card{background:#ffffff;border:1px solid #D3D1C7;border-radius:16px;padding:1.25rem;margin-bottom:1rem}
+  .q-badge{display:inline-block;font-size:11px;font-weight:600;background:#EAF3DE;color:#3B6D11;padding:3px 12px;border-radius:20px;margin-bottom:.75rem;border:1px solid #C0DD97}
+  .q-text{font-size:16px;font-weight:600;color:#2C2C2A;line-height:1.5;margin-bottom:1rem}
+  .options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .opt-btn{background:#ffffff;border:1.5px solid #D3D1C7;border-radius:10px;padding:14px 12px;font-size:14px;color:#2C2C2A;cursor:pointer;text-align:left;line-height:1.4;transition:background .15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+  .opt-btn:active{background:#EAF3DE}
+  .opt-btn.correct{background:#EAF3DE;border-color:#1D9E75;color:#085041;font-weight:600}
+  .opt-btn.wrong{background:#FCEBEB;border-color:#E24B4A;color:#501313}
+  .opt-btn:disabled{cursor:default}
+  .feedback-box{border-radius:12px;padding:14px 16px;font-size:14px;line-height:1.6;margin-bottom:1rem}
+  .feedback-box.good{background:#EAF3DE;color:#085041;border:1px solid #9FE1CB}
+  .feedback-box.bad{background:#FCEBEB;color:#501313;border:1px solid #F7C1C1}
+  .feedback-icon{font-size:20px;margin-bottom:6px;display:block}
+  .feedback-fact{margin-top:6px;font-size:13px;opacity:.85}
+  .next-btn{width:100%;padding:14px;border-radius:12px;border:none;background:#1D9E75;color:#ffffff;font-size:15px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+  .next-btn:active{background:#0F6E56}
+  .start-btn{display:block;width:100%;padding:16px;border-radius:14px;border:none;background:#1D9E75;color:#ffffff;font-size:16px;font-weight:600;cursor:pointer;margin-top:1.5rem;-webkit-tap-highlight-color:transparent}
+  .start-btn:active{background:#0F6E56}
+  .replay-btn{display:block;width:100%;padding:14px;border-radius:12px;border:1.5px solid #D3D1C7;background:#ffffff;color:#5F5E5A;font-size:15px;font-weight:500;cursor:pointer;margin-top:.75rem;-webkit-tap-highlight-color:transparent}
+  .progress-dots{display:flex;gap:6px;justify-content:center;margin-bottom:1.25rem;flex-wrap:wrap}
+  .dot{width:10px;height:10px;border-radius:50%;background:#D3D1C7;border:1px solid #B4B2A9}
+  .dot.done{background:#1D9E75;border-color:#0F6E56}
+  .dot.current{background:#639922;border-color:#3B6D11}
+  .dot.wrong{background:#E24B4A;border-color:#A32D2D}
+  .title-block{text-align:center;margin-bottom:1.5rem;padding-top:.5rem}
+  .game-title{font-size:26px;font-weight:700;color:#27500A;margin-bottom:6px}
+  .game-sub{font-size:15px;color:#5F5E5A;line-height:1.5}
+  .info-box{background:#ffffff;border-radius:14px;border:1px solid #D3D1C7;padding:1rem 1.25rem;margin-bottom:1rem;font-size:14px;color:#5F5E5A;line-height:1.9}
+  .info-box strong{color:#2C2C2A;font-weight:600}
+  .action-header{background:#EAF3DE;border-radius:14px;padding:1.25rem;margin-bottom:1.25rem;text-align:center;border:1px solid #C0DD97}
+  .action-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:.75rem}
+  .chip{background:#ffffff;border-radius:20px;padding:10px 16px;font-size:14px;color:#085041;cursor:pointer;border:1.5px solid #9FE1CB;-webkit-tap-highlight-color:transparent;touch-action:manipulation;line-height:1.3}
+  .chip:active{background:#EAF3DE}
+  .chip.selected{background:#C0DD97;border-color:#3B6D11;color:#27500A;font-weight:600}
+  .chip.used{background:#f0f0f0;color:#888780;border-color:#D3D1C7;cursor:default}
+  .end-title{font-size:24px;font-weight:700;text-align:center;color:#27500A;margin:1rem 0 .5rem}
+  .end-msg{font-size:14px;color:#5F5E5A;text-align:center;line-height:1.6;margin-bottom:1.5rem;padding:0 .5rem}
+  .badge-row{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:1.5rem}
+  .earned-badge{background:#EAF3DE;border:1.5px solid #9FE1CB;border-radius:12px;padding:10px 16px;text-align:center;font-size:13px;color:#27500A;font-weight:600}
+  .badge-icon{font-size:22px;display:block;margin-bottom:4px}
+  .streak-banner{background:#FAEEDA;border:1px solid #FAC775;border-radius:10px;padding:8px 14px;font-size:13px;color:#633806;font-weight:500;text-align:center;margin-bottom:.75rem}
+  @media(max-width:400px){.options{grid-template-columns:1fr}.stats-row .stat-val{font-size:20px}}
+</style>
+</head>
+<body>
+<div class="game-wrap">
+
+<div class="screen active" id="screen-start">
+  <div class="title-block">
+    <svg width="80" height="80" viewBox="0 0 80 80" fill="none" style="margin:0 auto 1rem;display:block">
+      <circle cx="40" cy="40" r="36" fill="#EAF3DE" stroke="#C0DD97" stroke-width="2"></circle>
+      <circle cx="40" cy="40" r="26" fill="#9FE1CB"></circle>
+      <ellipse cx="34" cy="38" rx="10" ry="13" fill="#27500A"></ellipse>
+      <ellipse cx="50" cy="45" rx="8" ry="10" fill="#3B6D11"></ellipse>
+      <ellipse cx="40" cy="30" rx="7" ry="8" fill="#639922"></ellipse>
+      <circle cx="24" cy="40" r="5" fill="#5DCAA5"></circle>
+      <circle cx="56" cy="32" r="4" fill="#5DCAA5"></circle>
+    </svg>
+    <h1 class="game-title">🌍 Earth Hero Quest</h1>
+    <p class="game-sub">Answer questions, take actions,<br>and heal the planet!</p>
+  </div>
+  <div class="info-box">
+    Answer <strong>10 questions</strong> about saving nature.<br>
+    ✅ Each correct answer <strong>heals Earth</strong> and earns <strong>Green Points</strong>.<br>
+    ⚡ Get answers in a row for a <strong>streak bonus!</strong><br>
+    🌱 Take real <strong>Earth Hero actions</strong> for extra points.<br>
+    🏅 Earn <strong>badges</strong> and become an Earth Hero!
+  </div>
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-val">10</div><div class="stat-lbl">Questions</div></div>
+    <div class="stat-card"><div class="stat-val">4</div><div class="stat-lbl">Badges</div></div>
+    <div class="stat-card"><div class="stat-val">115</div><div class="stat-lbl">Max points</div></div>
+  </div>
+  <button class="start-btn" onclick="startGame()">🚀 Start the Quest!</button>
+</div>
+
+<div class="screen" id="screen-game">
+  <div class="earth-scene" id="earth-scene">
+    <svg id="earth-svg" width="150" height="150" viewBox="0 0 150 150">
+      <circle cx="75" cy="75" r="65" fill="#9FE1CB" id="ocean"></circle>
+      <ellipse cx="62" cy="65" rx="20" ry="24" fill="#27500A"></ellipse>
+      <ellipse cx="92" cy="80" rx="16" ry="18" fill="#3B6D11"></ellipse>
+      <ellipse cx="70" cy="95" rx="12" ry="10" fill="#27500A"></ellipse>
+      <circle cx="75" cy="75" r="65" fill="none" stroke="#C0DD97" stroke-width="2"></circle>
+      <circle cx="40" cy="48" r="7" fill="#ffffff" fill-opacity="0.35"></circle>
+      <circle cx="105" cy="42" r="5" fill="#ffffff" fill-opacity="0.35"></circle>
+      <circle cx="75" cy="75" r="65" id="smog-layer" fill="#888780" fill-opacity="0"></circle>
+    </svg>
+    <div class="earth-caption" id="earth-caption">Earth is waiting for your help...</div>
+  </div>
+  <div class="health-bar-wrap">
+    <div class="health-label"><span>🌿 Earth's health</span><span id="health-pct">50%</span></div>
+    <div class="health-bar"><div class="health-fill" id="health-fill" style="width:50%;background:#639922"></div></div>
+  </div>
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-val" id="score-val">0</div><div class="stat-lbl">Green points</div></div>
+    <div class="stat-card"><div class="stat-val" id="streak-val">0</div><div class="stat-lbl">🔥 Streak</div></div>
+    <div class="stat-card"><div class="stat-val" id="q-num">1<span style="font-size:13px;font-weight:400;color:#888780">/10</span></div><div class="stat-lbl">Question</div></div>
+  </div>
+  <div class="progress-dots" id="progress-dots"></div>
+  <div id="streak-banner" class="streak-banner" style="display:none"></div>
+  <div class="q-card">
+    <span class="q-badge" id="q-category">Nature</span>
+    <p class="q-text" id="q-text">Loading...</p>
+    <div class="options" id="options"></div>
+  </div>
+  <div class="feedback-box" id="feedback-box" style="display:none"></div>
+  <button class="next-btn" id="next-btn" style="display:none" onclick="nextQuestion()">Next question →</button>
+</div>
+
+<div class="screen" id="screen-action">
+  <div class="action-header">
+    <div style="font-size:40px;margin-bottom:.5rem">🌱</div>
+    <p style="font-size:17px;font-weight:700;color:#27500A;margin-bottom:4px">Earth Hero Action!</p>
+    <p style="font-size:13px;color:#3B6D11">Great job so far! Tap one real action you can do to help Earth:</p>
+  </div>
+  <p style="font-size:13px;color:#5F5E5A;margin-bottom:.5rem;font-weight:500">Choose one action (+5 bonus points!):</p>
+  <div class="action-chips" id="action-chips"></div>
+  <button class="next-btn" id="action-continue" style="margin-top:1.25rem;display:none" onclick="continueAfterAction()">Keep going! →</button>
+</div>
+
+<div class="screen" id="screen-end">
+  <div class="earth-scene" style="background:#EAF3DE">
+    <svg width="150" height="150" viewBox="0 0 150 150">
+      <circle cx="75" cy="75" r="65" fill="#9FE1CB"></circle>
+      <ellipse cx="62" cy="65" rx="20" ry="24" fill="#27500A"></ellipse>
+      <ellipse cx="92" cy="80" rx="16" ry="18" fill="#3B6D11"></ellipse>
+      <ellipse cx="70" cy="95" rx="12" ry="10" fill="#27500A"></ellipse>
+      <circle cx="75" cy="75" r="65" fill="none" stroke="#C0DD97" stroke-width="2"></circle>
+      <circle cx="40" cy="48" r="7" fill="#ffffff" fill-opacity="0.4"></circle>
+      <circle cx="105" cy="42" r="5" fill="#ffffff" fill-opacity="0.4"></circle>
+      <path d="M55 78 L70 93 L100 63" stroke="#ffffff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
+    </svg>
+    <div class="earth-caption" style="color:#27500A;font-weight:600">🎉 Earth thanks you!</div>
+  </div>
+  <h2 class="end-title" id="end-title">You're an Earth Hero!</h2>
+  <p class="end-msg" id="end-msg">Amazing job!</p>
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-val" id="final-score" style="color:#1D9E75">0</div><div class="stat-lbl">Green points</div></div>
+    <div class="stat-card"><div class="stat-val" id="final-correct" style="color:#185FA5">0/10</div><div class="stat-lbl">Correct</div></div>
+    <div class="stat-card"><div class="stat-val" id="final-badges" style="color:#BA7517">0</div><div class="stat-lbl">Badges</div></div>
+  </div>
+  <div class="badge-row" id="badge-row"></div>
+  <button class="start-btn" onclick="startGame()">🔄 Play Again!</button>
+  <button class="replay-btn" onclick="showScreen(&#39;screen-start&#39;)">Back to home</button>
+</div>
+
+</div>
+<script>
+const QUESTIONS=[
+  {cat:"🌳 Plants",text:"Trees help us breathe by making what gas that we need to live?",opts:["Oxygen","Carbon dioxide","Smoke","Nitrogen"],ans:0,fact:"Trees make oxygen through photosynthesis. One tree makes enough oxygen for 4 people to breathe for a whole year!"},
+  {cat:"♻️ Waste",text:"Which is the BEST thing to do with an empty plastic bottle?",opts:["Throw it in the trash","Burn it","Recycle it","Leave it outside"],ans:2,fact:"Recycling one plastic bottle saves enough energy to power a light bulb for 6 hours. Always recycle!"},
+  {cat:"💧 Water",text:"About how much of Earth's water can people and animals actually drink?",opts:["50%","25%","3%","75%"],ans:2,fact:"Only about 3% of Earth's water is fresh water — and most of that is frozen! We must save every drop."},
+  {cat:"🐾 Animals",text:"When forests are cut down, what happens to the animals living there?",opts:["They get bigger","They lose their home","They move to cities","Nothing changes"],ans:1,fact:"Deforestation destroys habitats. Over 1 million species are threatened because forests are disappearing."},
+  {cat:"☀️ Energy",text:"Which energy source is best for Earth because it never runs out?",opts:["Coal","Gasoline","Natural gas","Sunlight"],ans:3,fact:"Solar energy from the sun is renewable — it never runs out and doesn't pollute the air!"},
+  {cat:"🌊 Oceans",text:"What can happen if plastic bags end up in the ocean?",opts:["Fish use them as toys","Sea animals can get hurt","They disappear quickly","They turn into sand"],ans:1,fact:"Millions of sea animals are harmed by ocean plastic every year. Sea turtles mistake plastic bags for jellyfish!"},
+  {cat:"🌳 Plants",text:"Why is it important to plant trees in cities and neighborhoods?",opts:["They block the view","They clean air and cool streets","They are just decorations","They stop cars"],ans:1,fact:"City trees reduce air pollution, lower temperatures, and make neighborhoods healthier for everyone."},
+  {cat:"💧 Water",text:"Which daily habit saves the MOST water?",opts:["Turn off tap while brushing","Drink more water","Wash hands less","Buy bottled water"],ans:0,fact:"Leaving the tap running while brushing teeth wastes up to 8 gallons per minute! Turning it off saves thousands of gallons a year."},
+  {cat:"♻️ Waste",text:"What does 'composting' mean?",opts:["Throwing food in the trash","Turning food scraps into soil","Burning garbage","Recycling paper"],ans:1,fact:"Composting turns fruit peels and vegetable scraps into rich soil that helps plants grow. It keeps trash out of landfills too!"},
+  {cat:"🌍 Earth",text:"What is the most powerful thing kids can do to help Earth?",opts:["Nothing, only adults can help","Learn, share and inspire others","Stay indoors","Only recycle"],ans:1,fact:"Kids are incredibly powerful! When you share what you know with friends and family, you multiply your impact!"},
+  {cat:"☀️ Energy",text:"What does turning off lights when you leave a room help with?",opts:["Making rooms darker","Saving electricity","Making bulbs last longer","Nothing"],ans:1,fact:"Lights left on in empty rooms waste huge amounts of electricity. Turning them off is one of the easiest ways to help Earth every day!"},
+  {cat:"🌿 Nature",text:"What color is healthy soil that helps plants grow well?",opts:["Gray and dusty","Dark rich brown","White and sandy","Bright yellow"],ans:1,fact:"Healthy soil is dark and full of nutrients from decomposed leaves and compost. Good soil is the foundation of all life on Earth!"}
+];
+const ACTIONS=["Turn off lights when I leave a room","Use a reusable water bottle today","Pick up one piece of litter outside","Plant a seed or water a plant","Take a shorter shower","Remind my family to recycle","Walk or bike instead of a car ride","Turn off the tap while brushing teeth","Say no to a plastic straw","Eat a meatless meal today","Put trash in a bin, not the ground","Open curtains instead of turning on lights"];
+const BADGE_DEFS=[{id:"First Hero",icon:"🌱",label:"First Hero"},{id:"Hot Streak",icon:"🔥",label:"Hot Streak"},{id:"Earth Guardian",icon:"🌍",label:"Earth Guardian"},{id:"Super Scorer",icon:"⭐",label:"Super Scorer"}];
+
+let state={};
+
+function startGame(){
+  state={qIndex:0,score:0,streak:0,correct:0,health:50,badges:[],usedActions:[],questions:shuffle([...QUESTIONS]).slice(0,10)};
+  showScreen('screen-game');
+  buildDots();
+  updateHealth();
+  renderQuestion();
+}
+
+function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function buildDots(){const c=document.getElementById('progress-dots');c.innerHTML='';state.questions.forEach((_,i)=>{const d=document.createElement('div');d.className='dot'+(i===0?' current':'');d.id='dot-'+i;c.appendChild(d);});}
+function updateDot(i,cls){const d=document.getElementById('dot-'+i);if(d)d.className='dot '+cls;}
+
+function renderQuestion(){
+  const q=state.questions[state.qIndex];
+  document.getElementById('q-category').textContent=q.cat;
+  document.getElementById('q-text').textContent=q.text;
+  document.getElementById('q-num').innerHTML=`${state.qIndex+1}<span style="font-size:13px;font-weight:400;color:#888780">/10</span>`;
+  document.getElementById('score-val').textContent=state.score;
+  document.getElementById('streak-val').textContent=state.streak;
+  document.getElementById('feedback-box').style.display='none';
+  document.getElementById('next-btn').style.display='none';
+  document.getElementById('streak-banner').style.display='none';
+  const opts=document.getElementById('options');
+  opts.innerHTML='';
+  q.opts.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className='opt-btn';b.textContent=o;
+    b.onclick=()=>answer(i,q);
+    opts.appendChild(b);
+  });
+}
+
+function answer(chosen,q){
+  document.querySelectorAll('.opt-btn').forEach((b,i)=>{
+    b.disabled=true;
+    if(i===q.ans)b.classList.add('correct');
+    else if(i===chosen&&chosen!==q.ans)b.classList.add('wrong');
+  });
+  const fb=document.getElementById('feedback-box');
+  fb.style.display='block';
+  if(chosen===q.ans){
+    const bonus=state.streak>=2?5:0;
+    state.score+=10+bonus;state.streak++;state.correct++;
+    state.health=Math.min(100,state.health+10);
+    fb.className='feedback-box good';
+    fb.innerHTML=`<span class="feedback-icon">✅</span><strong>Correct! +${10+bonus} points!</strong><div class="feedback-fact">${q.fact}</div>`;
+    updateDot(state.qIndex,'done');
+    if(state.streak>=2){const b=document.getElementById('streak-banner');b.style.display='block';b.textContent=`🔥 ${state.streak} in a row! Streak bonus active!`;}
+    checkBadges();
+  } else {
+    state.streak=0;state.health=Math.max(10,state.health-5);
+    fb.className='feedback-box bad';
+    fb.innerHTML=`<span class="feedback-icon">❌</span><strong>Not quite — the answer was: ${q.opts[q.ans]}</strong><div class="feedback-fact">${q.fact}</div>`;
+    updateDot(state.qIndex,'wrong');
+  }
+  updateHealth();
+  document.getElementById('score-val').textContent=state.score;
+  document.getElementById('streak-val').textContent=state.streak;
+  document.getElementById('next-btn').style.display='block';
+}
+
+function updateHealth(){
+  const pct=Math.round(state.health);
+  document.getElementById('health-pct').textContent=pct+'%';
+  const fill=document.getElementById('health-fill');
+  fill.style.width=pct+'%';
+  fill.style.background=pct>=70?'#1D9E75':pct>=40?'#639922':'#E24B4A';
+  const smog=document.getElementById('smog-layer');
+  if(smog)smog.setAttribute('fill-opacity',Math.max(0,(50-pct)/120).toFixed(2));
+  const cap=document.getElementById('earth-caption');
+  if(cap){if(pct>=80)cap.textContent='🌿 Earth is thriving! Keep going!';else if(pct>=60)cap.textContent='😊 Earth is getting healthier!';else if(pct>=40)cap.textContent='🌱 Earth needs your help...';else cap.textContent='😟 Earth is struggling — answer correctly!';}
+}
+
+function checkBadges(){
+  const add=id=>{if(!state.badges.includes(id))state.badges.push(id);};
+  if(state.correct===1)add('First Hero');
+  if(state.streak>=3)add('Hot Streak');
+  if(state.correct>=8)add('Earth Guardian');
+  if(state.score>=90)add('Super Scorer');
+}
+
+function nextQuestion(){
+  state.qIndex++;
+  if(state.qIndex>=state.questions.length){showEnd();}
+  else if(state.qIndex>0&&state.qIndex%3===0){showActionScreen();}
+  else{updateDot(state.qIndex,'current');renderQuestion();}
+}
+
+function showActionScreen(){
+  showScreen('screen-action');
+  document.getElementById('action-continue').style.display='none';
+  const picks=shuffle(ACTIONS.filter(a=>!state.usedActions.includes(a))).slice(0,6);
+  const chips=document.getElementById('action-chips');
+  chips.innerHTML='';
+  picks.forEach(a=>{
+    const c=document.createElement('div');c.className='chip';c.textContent=a;
+    c.onclick=()=>{
+      if(c.classList.contains('used')||c.classList.contains('selected'))return;
+      chips.querySelectorAll('.chip').forEach(x=>x.classList.add('used'));
+      c.classList.remove('used');c.classList.add('selected');
+      state.usedActions.push(a);state.score+=5;state.health=Math.min(100,state.health+5);
+      updateHealth();document.getElementById('action-continue').style.display='block';
+    };
+    chips.appendChild(c);
+  });
+}
+
+function continueAfterAction(){
+  updateDot(state.qIndex,'current');
+  showScreen('screen-game');renderQuestion();
+}
+
+function showEnd(){
+  checkBadges();showScreen('screen-end');
+  document.getElementById('final-score').textContent=state.score;
+  document.getElementById('final-correct').textContent=state.correct+'/10';
+  document.getElementById('final-badges').textContent=state.badges.length;
+  const pct=(state.correct/10)*100;
+  let title,msg;
+  if(pct>=90){title='🌟 Earth Superstar!';msg='Incredible! You got almost everything right. Earth is so lucky to have you as a hero. Share what you learned with everyone!';}
+  else if(pct>=70){title='🌍 You\'re an Earth Hero!';msg='Amazing work! You really understand how to care for our planet. Keep sharing what you know with your friends and family!';}
+  else if(pct>=50){title='🌿 Earth Protector!';msg='Great effort! Every question helped you learn something new about saving our planet. Play again to earn more points!';}
+  else{title='🌱 Earth Explorer!';msg='Good start on your Earth Hero journey! Play again — you\'ll learn more each time and become a true Earth Hero!';}
+  document.getElementById('end-title').textContent=title;
+  document.getElementById('end-msg').textContent=msg;
+  const br=document.getElementById('badge-row');
+  br.innerHTML='';
+  if(state.badges.length===0){br.innerHTML='<p style="font-size:13px;color:#888780;text-align:center;width:100%">Play again to earn badges!</p>';}
+  else{BADGE_DEFS.filter(b=>state.badges.includes(b.id)).forEach(b=>{br.innerHTML+=`<div class="earned-badge"><span class="badge-icon">${b.icon}</span>${b.label}</div>`;});}
+}
+</script>
+
+
+</body></html>
